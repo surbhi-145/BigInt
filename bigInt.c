@@ -9,6 +9,8 @@
 #include <string.h>
 #include <limits.h>
 
+#define MAX 400
+
 typedef enum
 {
     FAILURE,
@@ -18,7 +20,7 @@ typedef enum
 typedef struct bigInt
 {
     int *data;
-    char number[INT_MAX];
+    char number[MAX];
     int sign; //1 for positive ,-1 for negative
 
 } bigInt;
@@ -54,7 +56,7 @@ statuscode charToInt(bigInt **a)
 {
     statuscode sc = SUCCESS;
 
-    free((*a)->data);
+    //free((*a)->data);
     int x=strlen((*a)->number);
 
     if(*((*a)->number)=='-')
@@ -171,6 +173,26 @@ statuscode valid(bigInt** a)
             }
             
         }
+    }
+
+    if(sc==1)
+    {
+        int i=0;
+        while(*((*a)->data+i)==0)
+        i+=1;
+
+        if(i!=strlen((*a)->number))
+        {
+            (*a)->data+=i;
+            intToChar(a,strlen((*a)->number)-i);
+        }
+
+        if(strlen((*a)->number)>310)
+        {
+            printf("The lenght of the number is too big.\n");
+            sc=0;
+        }
+           
     }
 
     return sc;
@@ -686,18 +708,24 @@ void main()
 
     printf("SUBTRACTION\n");
     sc=subtract(a,b,&s);
+    sc=valid(&s);
+    if(sc==1)
     print(&s);
     sc=charToInt(&a);
     sc=charToInt(&b);
 
     printf("ADDITION\n");
     sc=add(a,b,&s);
+    sc=valid(&s);
+    if(sc==1)
     print(&s);
     sc=charToInt(&a);
     sc=charToInt(&b);
 
     printf("MULTIPLICATION\n");
     sc=multiply(a,b,&s);
+    sc=valid(&s);
+    if(sc==1)
     print(&s);
     sc=charToInt(&a);
     sc=charToInt(&b);
